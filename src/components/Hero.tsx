@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 const Hero = () => {
-  const [subtitleText, setSubtitleText] = useState('');
-  const subtitle = 'Crafting digital experiences with passion and precision';
-  
+  const [subtitleText, setSubtitleText] = useState("");
+  const subtitle = "Crafting digital experiences with passion and precision";
+
   useEffect(() => {
     let currentIndex = 0;
     const interval = setInterval(() => {
@@ -23,7 +23,7 @@ const Hero = () => {
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
       {/* Animated gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 animate-gradient-xy"></div>
-      
+
       {/* Glass morphism overlay */}
       <div className="absolute inset-0 backdrop-blur-[120px]"></div>
 
@@ -39,10 +39,10 @@ const Hero = () => {
           transition={{ duration: 0.5 }}
           className="mb-6"
         >
-          <div className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
+          <div className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
             Welcome to
           </div>
-          <div className="text-7xl font-extrabold mt-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
+          <div className="text-5xl font-extrabold mt-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
             Studio SOOH
           </div>
         </motion.div>
@@ -56,7 +56,11 @@ const Hero = () => {
           {subtitleText}
           <motion.span
             animate={{ opacity: [1, 0] }}
-            transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
+            transition={{
+              duration: 0.5,
+              repeat: Infinity,
+              repeatType: "reverse",
+            }}
             className="inline-block ml-1"
           >
             |
