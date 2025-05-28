@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
 
 interface NavbarProps {
   sections: Array<{
@@ -19,7 +19,7 @@ const Navbar = ({ sections, activeSection }: NavbarProps) => {
       className="fixed top-0 right-0 z-40 w-full backdrop-blur-md bg-white/80 shadow-lg"
     >
       <div className="h-20 flex items-center justify-center px-6">
-        <ul className="flex space-x-8 items-center">
+        <ul className="flex space-x-0 items-center">
           <li className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
             Portfolio
           </li>
@@ -33,16 +33,22 @@ const Navbar = ({ sections, activeSection }: NavbarProps) => {
               >
                 <a
                   href={`#${section.id}`}
-                  className="flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-gray-100 transition-colors relative"
+                  className="flex items-center space-x-1 px-4 py-2 rounded-full hover:bg-gray-100 transition-colors relative"
                 >
                   <Icon size={20} className="text-gray-600" />
-                  <span className="font-medium text-gray-800">{section.title}</span>
+                  <span className="font-medium text-gray-800">
+                    {section.title}
+                  </span>
                   {activeSection === section.id && (
                     <motion.div
                       layoutId="navbar-indicator"
                       className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600"
                       initial={false}
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 30,
+                      }}
                     />
                   )}
                 </a>
