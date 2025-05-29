@@ -39,10 +39,10 @@ const Hero = () => {
           transition={{ duration: 0.5 }}
           className="mb-6"
         >
-          <div className="text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
+          <div className="text-20xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
             Welcome to
           </div>
-          <div className="text-8xl font-extrabold mt-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
+          <div className="text-20xl font-extrabold mt-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
             Studio SOOH
           </div>
         </motion.div>
