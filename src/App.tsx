@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Hero from "./components/Hero";
 import Section from "./components/Section";
+import Footer from "./components/Footer"; // Import Footer
 
 const sections = [
   {
@@ -79,6 +80,8 @@ function App() {
           />
         ))}
       </main>
+
+      <Footer /> {/* Add Footer component */}
     </div>
   );
 }
