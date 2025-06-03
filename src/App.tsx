@@ -1,6 +1,7 @@
-import React from "react";
-import { User, BookOpen, AppWindow, Gamepad2, Film } from "lucide-react";
+import React, { useState } from "react";
+import { User, BookOpen, AppWindow, Gamepad2, Film, Menu } from "lucide-react";
 import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
 import Hero from "./components/Hero";
 import Section from "./components/Section";
 
@@ -47,9 +48,24 @@ const sections = [
 
 function App() {
   const [activeSection, setActiveSection] = React.useState("hero");
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+
+      <button
+        onClick={toggleSidebar}
+        className="fixed top-4 left-4 z-50 p-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
+        aria-label="Toggle sidebar"
+      >
+        <Menu size={24} />
+      </button>
+
       <Navbar sections={sections} activeSection={activeSection} />
 
       <main>
