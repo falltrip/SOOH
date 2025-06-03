@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bot, SignIn } from 'lucide-react';
+import { Bot, LogIn } from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -34,7 +34,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
           onClick={() => console.log("Sign in clicked")} // Replace with actual sign-in logic
           className="flex items-center justify-center w-full p-2 mb-10 bg-purple-600 hover:bg-purple-700 rounded-lg text-white"
         >
-          <SignIn size={20} className="mr-2" />
+          <LogIn size={20} className="mr-2" />
           Sign In
         </button>
 
