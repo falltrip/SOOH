@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bot, LogIn } from 'lucide-react';
+import { Bot, LogIn, Menu } from 'lucide-react'; // Added Menu
 
 interface SidebarProps {
   isOpen: boolean;
@@ -24,9 +24,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="fixed top-0 left-0 bottom-0 w-64 bg-gray-800 text-white shadow-lg z-50 flex flex-col p-5"
       >
-        {/* Top Icon */}
-        <div className="mb-10">
-          <Bot size={40} className="text-purple-400" />
+        {/* New Top Area: Close Button, Bot Icon, and "Studio" Text */}
+        <div className="flex items-center space-x-3 mb-10 pr-2">
+          <button
+            onClick={toggleSidebar}
+            className="p-1 text-gray-300 hover:text-white rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500" // Removed lg:hidden
+            aria-label="Close sidebar"
+          >
+            <Menu size={24} />
+          </button>
+          <Bot size={32} className="text-purple-400 flex-shrink-0" />
+          <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 truncate">
+            Studio
+          </span>
         </div>
 
         {/* Sign In Button */}
@@ -45,14 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
           <p className="text-sm text-gray-400">Total Visitors: 0</p>
         </div>
 
-        {/* Optional: Close button inside the sidebar for mobile */}
-        <button
-            onClick={toggleSidebar}
-            className="lg:hidden absolute top-4 right-4 text-gray-300 hover:text-white"
-            aria-label="Close sidebar"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
+        {/* The old SVG close button has been removed and replaced by the Menu button in the new top area */}
       </motion.div>
     </>
   );

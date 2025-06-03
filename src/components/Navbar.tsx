@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Menu } from "lucide-react"; // Added Menu import
+import { Menu, Bot } from "lucide-react"; // Added Bot import
 
 interface NavbarProps {
   sections: Array<{
@@ -22,8 +22,8 @@ const Navbar = ({ sections, activeSection, toggleSidebar, isSidebarOpen }: Navba
       className="fixed top-0 left-0 right-0 z-40 w-full backdrop-blur-md bg-white/80 shadow-lg" // Added left-0 for full width consistency
     >
       <div className="h-20 flex items-center justify-between px-6"> {/* Changed justify-center to justify-between */}
-        {/* Left side: Toggle button and new title */}
-        <div className="flex items-center space-x-4">
+        {/* Left side: Toggle button, Bot icon, and new title */}
+        <div className="flex items-center space-x-3"> {/* Adjusted spacing to space-x-3 */}
           <button
             onClick={toggleSidebar}
             className="p-2 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 transition-colors"
@@ -31,8 +31,9 @@ const Navbar = ({ sections, activeSection, toggleSidebar, isSidebarOpen }: Navba
           >
             <Menu size={24} />
           </button>
+          <Bot size={28} className="text-purple-600" /> {/* Added Bot icon */}
           <span className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-            SOOH's Portfolio
+            Studio {/* Changed text to Studio */}
           </span>
         </div>
 
