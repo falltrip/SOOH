@@ -22,7 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
         initial={{ x: "-100%" }}
         animate={{ x: isOpen ? "0%" : "-100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed top-0 left-0 bottom-0 w-64 bg-gray-800 text-white shadow-lg z-40 flex flex-col p-5"
+        className="fixed top-0 left-0 bottom-0 w-64 bg-gray-800 text-white shadow-lg z-50 flex flex-col p-5"
       >
         {/* Top Icon */}
         <div className="mb-10">
@@ -38,13 +38,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
           Sign In
         </button>
 
-        {/* Middle Content Placeholder */}
-        <div className="flex-grow mb-10">
-          <p className="text-gray-400">Middle Content</p>
-        </div>
-
         {/* Bottom Visitor Stats */}
-        <div className="mt-auto">
+        <div className="flex-grow mt-auto">
+          {/* Added flex-grow to the bottom stats to push it down, effectively replacing the old flex-grow div */}
           <p className="text-sm text-gray-400">Today's Visitors: 0</p>
           <p className="text-sm text-gray-400">Total Visitors: 0</p>
         </div>

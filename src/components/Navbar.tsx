@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Menu } from "lucide-react"; // Added Menu import
 
 interface NavbarProps {
   sections: Array<{
@@ -8,21 +9,36 @@ interface NavbarProps {
     icon: React.ElementType;
   }>;
   activeSection: string;
+  toggleSidebar: () => void; // Added toggleSidebar
+  isSidebarOpen: boolean;    // Added isSidebarOpen
 }
 
-const Navbar = ({ sections, activeSection }: NavbarProps) => {
+const Navbar = ({ sections, activeSection, toggleSidebar, isSidebarOpen }: NavbarProps) => { // Added props
   return (
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="fixed top-0 right-0 z-40 w-full backdrop-blur-md bg-white/80 shadow-lg"
+      className="fixed top-0 left-0 right-0 z-40 w-full backdrop-blur-md bg-white/80 shadow-lg" // Added left-0 for full width consistency
     >
-      <div className="h-20 flex items-center justify-center px-6">
+      <div className="h-20 flex items-center justify-between px-6"> {/* Changed justify-center to justify-between */}
+        {/* Left side: Toggle button and new title */}
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={toggleSidebar}
+            className="p-2 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 transition-colors"
+            aria-label="Toggle sidebar"
+          >
+            <Menu size={24} />
+          </button>
+          <span className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+            SOOH's Portfolio
+          </span>
+        </div>
+
+        {/* Right side: Navigation links */}
         <ul className="flex space-x-0 items-center">
-          <li className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-            Portfolio
-          </li>
+          {/* Removed the old "Portfolio" li item */}
           {sections.map((section) => {
             const Icon = section.icon;
             return (
