@@ -58,15 +58,12 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
-      <button
-        onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-50 p-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
-        aria-label="Toggle sidebar"
-      >
-        <Menu size={24} />
-      </button>
-
-      <Navbar sections={sections} activeSection={activeSection} />
+      <Navbar
+        sections={sections}
+        activeSection={activeSection}
+        toggleSidebar={toggleSidebar}
+        isSidebarOpen={isSidebarOpen}
+      />
 
       <main>
         <Hero />
