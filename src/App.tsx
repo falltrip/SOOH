@@ -1,7 +1,11 @@
-import React, { useState } from "react";
-import { User, BookOpen, AppWindow, Gamepad2, Film, Menu } from "lucide-react";
+import React, { useState, useEffect } from "react"; // Added useEffect
+import { User as LucideUser, BookOpen, AppWindow, Gamepad2, Film, Menu } from "lucide-react"; // Renamed User to LucideUser to avoid conflict
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
+import { auth } from './firebaseClient'; // Import auth
+import { onAuthStateChanged, User } from 'firebase/auth'; // Import onAuthStateChanged and User type
+import SignInModal from "./components/SignInModal";
+import SignUpModal from "./components/SignUpModal";
 import Hero from "./components/Hero";
 import Section from "./components/Section";
 import Footer from "./components/Footer"; // Import Footer
@@ -10,7 +14,7 @@ const sections = [
   {
     id: "profile",
     title: "Profile",
-    icon: User,
+    icon: LucideUser, // Corrected: Was User, should be LucideUser
     description:
       "Full-stack developer passionate about creating beautiful web experiences",
     image: "https://images.unsplash.com/photo-1517849845537-4d257902454a",
@@ -50,14 +54,66 @@ const sections = [
 function App() {
   const [activeSection, setActiveSection] = React.useState("hero");
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [loadingAuthState, setLoadingAuthState] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setLoadingAuthState(false);
+      // console.log("Auth state changed, user:", user);
+      // If user is logged in, close modals, otherwise they might stay open if login happens while modal is up.
+      if (user) {
+        setIsSignInModalOpen(false);
+        setIsSignUpModalOpen(false);
+      }
+    });
+    return () => unsubscribe(); // Cleanup subscription on unmount
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
 
+  const openSignInModal = () => {
+    setIsSignInModalOpen(true);
+    setIsSignUpModalOpen(false);
+  };
+  const closeSignInModal = () => setIsSignInModalOpen(false);
+
+  const openSignUpModal = () => {
+    setIsSignUpModalOpen(true);
+    setIsSignInModalOpen(false);
+  };
+  const closeSignUpModal = () => setIsSignUpModalOpen(false);
+
+  const switchToSignUp = () => {
+    openSignUpModal();
+  };
+
+  const switchToSignIn = () => {
+    openSignInModal();
+  };
+
+  if (loadingAuthState) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-xl font-semibold text-gray-700">Loading application...</div>
+        {/* You could replace this with a more sophisticated spinner component */}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        openSignInModal={openSignInModal}
+        currentUser={currentUser}
+      />
 
       <Navbar
         sections={sections}
@@ -80,6 +136,17 @@ function App() {
           />
         ))}
       </main>
+
+      <SignInModal
+        isOpen={isSignInModalOpen}
+        onClose={closeSignInModal}
+        onSwitchToSignUp={switchToSignUp}
+      />
+      <SignUpModal
+        isOpen={isSignUpModalOpen}
+        onClose={closeSignUpModal}
+        onSwitchToSignIn={switchToSignIn}
+      />
 
       <Footer /> {/* Add Footer component */}
     </div>

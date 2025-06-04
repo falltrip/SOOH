@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAuth, signOut, onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth'; // Added sendPasswordResetEmail
+import { getFirestore, setDoc, doc } from 'firebase/firestore';
 import { getAnalytics } from "firebase/analytics";
 
 // Firebase configuration using Vite environment variables
@@ -24,3 +24,21 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 export { app, auth, db, analytics };
+
+// Function to save user data to Firestore
+export const saveUserDataToFirestore = async (userId, userData) => {
+  try {
+    await setDoc(doc(db, "users", userId), {
+      uid: userId,
+      email: userData.email,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      displayName: userData.displayName,
+      createdAt: new Date(),
+    });
+    console.log("User data saved to Firestore for UID:", userId);
+  } catch (error) {
+    console.error("Error saving user data to Firestore:", error);
+    throw error;
+  }
+};
