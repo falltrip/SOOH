@@ -11,6 +11,7 @@ import Hero from "./components/Hero";
 import Section from "./components/Section";
 import Footer from "./components/Footer"; // Import Footer
 import AdminPage from "./pages/AdminPage"; // Import the new AdminPage
+import ContentDetailPage from './pages/ContentDetailPage';
 
 const ADMIN_EMAIL = "falltrip97@gmail.com";
 
@@ -178,6 +179,7 @@ function App() {
             }
           />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/:category/:id" element={<ContentDetailPage />} />
         </Routes>
       </main>
 
