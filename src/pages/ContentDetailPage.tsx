@@ -95,7 +95,7 @@ const ContentDetailPage: React.FC = () => {
         <img
           src={fileUrl}
           alt={contentData.title || '콘텐츠 이미지'}
-          style={{ display: 'block', maxWidth: '100%', height: 'auto', marginTop: '20px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}
+          style={{ display: 'block', maxWidth: '100%', height: 'auto', margin: '20px auto 0', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}
         />
       );
     } else if (htmlExtensions.some(ext => filePath.endsWith(ext))) {
@@ -103,7 +103,7 @@ const ContentDetailPage: React.FC = () => {
         <iframe
           src={fileUrl}
           title={contentData.title || 'HTML 콘텐츠'}
-          style={{ width: '100%', height: 'calc(100vh - 160px)', marginTop: '20px', border: '1px solid #ddd', borderRadius: '8px' }}
+          style={{ display: 'block', width: '100%', height: '700px', margin: '20px auto 0', border: '1px solid #ddd', borderRadius: '8px' }}
           // sandbox="allow-scripts allow-same-origin" // 필요에 따라 sandbox 옵션 조정. 외부 스크립트 실행을 막으려면 빼거나 더 제한적으로 설정.
         ></iframe>
       );
@@ -118,7 +118,7 @@ const ContentDetailPage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '20px 40px', marginTop: '80px', maxWidth: '900px', margin: '80px auto 0' }}> {/* Navbar 높이 고려 및 중앙 정렬 */}
+    <div style={{ padding: '20px', marginTop: '80px', maxWidth: '1200px', margin: '80px auto 0' }}> {/* Navbar 높이 고려 및 중앙 정렬 */}
       <header style={{ marginBottom: '30px', borderBottom: '2px solid #eee', paddingBottom: '20px' }}>
         <h1 style={{ fontSize: '2.5em', fontWeight: 'bold', color: '#333' }}>{contentData.title || '제목 없음'}</h1>
         {contentData.description && <p style={{ fontSize: '1.1em', color: '#555', marginTop: '10px' }}>{contentData.description}</p>}
