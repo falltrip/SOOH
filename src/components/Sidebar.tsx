@@ -1,13 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bot, LogIn, Menu } from 'lucide-react'; // Added Menu
+import { Bot, LogIn, LogOut, Menu } from 'lucide-react';
+import { auth } from '../firebaseClient';
+import { signOut, User } from 'firebase/auth'; // Import User type
 
 interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
+  openSignInModal: () => void;
+  currentUser: User | null; // Updated type
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, openSignInModal, currentUser }) => {
   return (
     <>
       {/* Overlay to close sidebar on click */}
@@ -39,14 +43,35 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
           </span>
         </div>
 
-        {/* Sign In Button */}
-        <button
-          onClick={() => console.log("Sign in clicked")} // Replace with actual sign-in logic
-          className="flex items-center justify-center w-full p-2 mb-10 bg-purple-600 hover:bg-purple-700 rounded-lg text-white"
-        >
-          <LogIn size={20} className="mr-2" />
-          Sign In
-        </button>
+        {/* Sign In / Sign Out Button */}
+        {currentUser ? (
+          <button
+            onClick={async () => {
+              try {
+                await signOut(auth);
+                // console.log("User signed out");
+                // toggleSidebar(); // Optionally close sidebar on sign out
+              } catch (error) {
+                console.error("Sign out error:", error);
+              }
+            }}
+            className="flex items-center justify-center w-full p-2 mb-10 bg-red-600 hover:bg-red-700 rounded-lg text-white"
+          >
+            <LogOut size={20} className="mr-2" />
+            Sign Out
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              openSignInModal();
+              // toggleSidebar(); // Optionally close sidebar when opening modal
+            }}
+            className="flex items-center justify-center w-full p-2 mb-10 bg-purple-600 hover:bg-purple-700 rounded-lg text-white"
+          >
+            <LogIn size={20} className="mr-2" />
+            Sign In
+          </button>
+        )}
 
         {/* Bottom Visitor Stats */}
         <div className="flex-grow mt-auto">
