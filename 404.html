@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>페이지를 찾는 중...</title>
+    <script type="text/javascript">
+      // pathSegmentsToKeep는 기본 경로 /SOOH/ 를 유지하기 위해 1로 설정합니다.
+      // 만약 저장소 이름이 다르거나 루트에 배포한다면 이 값을 조정해야 합니다.
+      // 현재 프로젝트의 basePath는 /SOOH/ 이므로, pathname.split('/') 시 ['', 'SOOH', ' বাকি'] 와 같이 나옵니다.
+      // 따라서 slice(0, 1 + 1) = slice(0, 2) -> ['', 'SOOH'] -> join('/') -> /SOOH 가 됩니다.
+      var pathSegmentsToKeep = 1;
+
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + // Ensures '/SOOH' is kept
+        '/?p=/' + // 여기가 중요: index.html로 가면서 ?p= 파라미터로 실제 경로 전달
+        l.pathname.split('/').slice(1 + pathSegmentsToKeep).join('/') // 실제 요청된 경로 (예: app/콘텐츠ID)
+        .replace(/&/g, '~and~') + // 경로에 포함될 수 있는 & 문자를 인코딩 (드문 경우)
+        (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') + // 원래 쿼리스트링 보존
+        l.hash // 원래 해시 보존
+      );
+    </script>
+  </head>
+  <body>
+    <p>요청하신 페이지를 찾을 수 없습니다. 홈페이지로 이동하거나 잠시 후 자동으로 리다이렉트됩니다.</p>
+    <p>만약 자동으로 이동되지 않는다면, <a href="/SOOH/">홈페이지로 이동</a>해주세요.</p>
+  </body>
+</html>
