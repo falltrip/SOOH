@@ -1,14 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bot, LogIn, LogOut, Menu } from 'lucide-react';
+import { Bot, LogIn, LogOut, Menu, Shield } from 'lucide-react'; // Added Shield
+import { Link } from 'react-router-dom'; // Added Link
 import { auth } from '../firebaseClient';
-import { signOut, User } from 'firebase/auth'; // Import User type
+import { signOut, User } from 'firebase/auth';
 
 interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
   openSignInModal: () => void;
-  currentUser: User | null; // Updated type
+  currentUser: User | null;
   isAdmin?: boolean;
 }
 
@@ -33,15 +34,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, openSignInModa
         <div className="flex items-center space-x-3 mb-10 pr-2">
           <button
             onClick={toggleSidebar}
-            className="p-1 text-gray-300 hover:text-white rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500" // Removed lg:hidden
+            className="p-1 text-gray-300 hover:text-white rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500"
             aria-label="Close sidebar"
           >
             <Menu size={24} />
           </button>
           <Bot size={32} className="text-purple-400 flex-shrink-0" />
-          <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 truncate">
-            Studio
-          </span>
+          <Link to="/">
+            <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 truncate">
+              Studio
+            </span>
+          </Link>
         </div>
 
         {/* Sign In / Sign Out Button */}
@@ -50,13 +53,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, openSignInModa
             onClick={async () => {
               try {
                 await signOut(auth);
-                // console.log("User signed out");
-                // toggleSidebar(); // Optionally close sidebar on sign out
               } catch (error) {
                 console.error("Sign out error:", error);
               }
             }}
-            className="flex items-center justify-center w-full p-2 mb-10 bg-red-600 hover:bg-red-700 rounded-lg text-white"
+            className="flex items-center justify-center w-full p-2 mb-6 bg-red-600 hover:bg-red-700 rounded-lg text-white" // Adjusted mb-6
           >
             <LogOut size={20} className="mr-2" />
             Sign Out
@@ -65,23 +66,35 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, openSignInModa
           <button
             onClick={() => {
               openSignInModal();
-              // toggleSidebar(); // Optionally close sidebar when opening modal
             }}
-            className="flex items-center justify-center w-full p-2 mb-10 bg-purple-600 hover:bg-purple-700 rounded-lg text-white"
+            className="flex items-center justify-center w-full p-2 mb-6 bg-purple-600 hover:bg-purple-700 rounded-lg text-white" // Adjusted mb-6
           >
             <LogIn size={20} className="mr-2" />
             Sign In
           </button>
         )}
 
-        {/* Bottom Visitor Stats */}
-        <div className="flex-grow mt-auto">
-          {/* Added flex-grow to the bottom stats to push it down, effectively replacing the old flex-grow div */}
+        {/* Admin Page Button */}
+        {isAdmin && currentUser && (
+          <Link
+            to="/admin"
+            onClick={toggleSidebar} // Close sidebar on click
+            className="flex items-center justify-center w-full p-2 mb-6 bg-green-600 hover:bg-green-700 rounded-lg text-white" // Changed color for distinction, adjusted mb-6
+          >
+            <Shield size={20} className="mr-2" />
+            Admin Page
+          </Link>
+        )}
+
+        {/* Spacer div to push visitor stats to the bottom if no admin button is present, or after admin button */}
+        <div className="flex-grow"></div>
+
+
+        {/* Bottom Visitor Stats - Ensured it's the last element group before closing motion.div */}
+        <div className="mt-auto pt-6 border-t border-gray-700"> {/* Added pt-6 and border-t for separation */}
           <p className="text-sm text-gray-400">Today's Visitors: 0</p>
           <p className="text-sm text-gray-400">Total Visitors: 0</p>
         </div>
-
-        {/* The old SVG close button has been removed and replaced by the Menu button in the new top area */}
       </motion.div>
     </>
   );
