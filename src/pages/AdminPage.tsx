@@ -1,8 +1,8 @@
 // src/pages/AdminPage.tsx
 import React, { useState, useMemo, useEffect } from 'react';
 import { LayoutGrid, Book, AppWindow, Gamepad2, Film, PlusCircle, FilePenLine, Trash2, Loader2, AlertTriangle } from 'lucide-react';
-import AddContentModal from '../../components/AddContentModal';
-import { db, storage } from '../../firebaseClient'; // storage might be used later for file deletion
+import AddContentModal from '../components/AddContentModal';
+import { db, storage } from '../firebaseClient'; // storage might be used later for file deletion
 import { collection, addDoc, serverTimestamp, Timestamp, getDocs, onSnapshot, orderBy, query, doc, deleteDoc } from 'firebase/firestore'; // Added doc, deleteDoc
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage"; // Added deleteObject
 

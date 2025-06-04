@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, signOut, onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth'; // Added sendPasswordResetEmail
+import { getAuth, signOut, onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth';
 import { getFirestore, setDoc, doc } from 'firebase/firestore';
 import { getAnalytics } from "firebase/analytics";
+import { getStorage } from "firebase/storage"; // ✨ 이 줄을 추가해주세요!
 
 // Firebase configuration using Vite environment variables
 // These variables are expected to be in your .env file
@@ -22,8 +23,9 @@ const analytics = getAnalytics(app);
 // Firebase services
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app); // ✨ 이 줄을 추가해주세요!
 
-export { app, auth, db, analytics };
+export { app, auth, db, analytics, storage }; // ✨ 여기에 storage를 추가해주세요!
 
 // Function to save user data to Firestore
 export const saveUserDataToFirestore = async (userId, userData) => {
