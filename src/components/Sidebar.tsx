@@ -9,9 +9,10 @@ interface SidebarProps {
   toggleSidebar: () => void;
   openSignInModal: () => void;
   currentUser: User | null; // Updated type
+  isAdmin?: boolean;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, openSignInModal, currentUser }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, openSignInModal, currentUser, isAdmin }) => {
   return (
     <>
       {/* Overlay to close sidebar on click */}
