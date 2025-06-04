@@ -16,6 +16,7 @@ interface EditContentModalProps {
     category: string;
     newThumbnailFile: File | null;
     newContentFile: File | null;
+    projectUrl: string; // 추가
   }) => Promise<void>;
   categories: Category[];
   isSaving: boolean;
@@ -26,6 +27,7 @@ interface EditContentModalProps {
     category: string;
     thumbnailUrl?: string;
     fileUrl?: string;
+    projectUrl?: string; // 선택적 필드로 존재 확인
   } | null;
 }
 
@@ -33,6 +35,7 @@ const EditContentModal: React.FC<EditContentModalProps> = ({ isOpen, onClose, on
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedCat, setSelectedCat] = useState<string>('');
+  const [projectUrl, setProjectUrl] = useState('');
   const [newThumbnailFile, setNewThumbnailFile] = useState<File | null>(null);
   const [newContentFile, setNewContentFile] = useState<File | null>(null);
   const [newThumbnailPreview, setNewThumbnailPreview] = useState<string | null>(null);
@@ -42,6 +45,7 @@ const EditContentModal: React.FC<EditContentModalProps> = ({ isOpen, onClose, on
       setTitle(contentToEdit.title || '');
       setDescription(contentToEdit.description || '');
       setSelectedCat(contentToEdit.category || '');
+      setProjectUrl(contentToEdit.projectUrl || ''); // 추가
       // 파일 관련 상태 초기화
       setNewThumbnailFile(null);
       setNewContentFile(null);
@@ -52,6 +56,7 @@ const EditContentModal: React.FC<EditContentModalProps> = ({ isOpen, onClose, on
     } else if (isOpen) {
       setTitle('');
       setDescription('');
+      setProjectUrl(''); // 추가
       if (categories.length > 0) {
         const firstValidCategory = categories.find(c => c.id !== 'all');
         setSelectedCat(firstValidCategory?.id || categories[0]?.id || '');
@@ -70,12 +75,13 @@ const EditContentModal: React.FC<EditContentModalProps> = ({ isOpen, onClose, on
     if (!isOpen) {
         setNewThumbnailFile(null);
         setNewContentFile(null);
+        setProjectUrl(''); // 추가
         if (newThumbnailPreview) {
           URL.revokeObjectURL(newThumbnailPreview);
         }
         setNewThumbnailPreview(null);
     }
-  }, [isOpen, contentToEdit, categories]); // newThumbnailPreview 의존성 제거
+  }, [isOpen, contentToEdit, categories]);
 
   useEffect(() => {
     // 컴포넌트 언마운트 시 또는 newThumbnailPreview가 바뀌기 전에 이전 URL 해제
@@ -120,8 +126,9 @@ const EditContentModal: React.FC<EditContentModalProps> = ({ isOpen, onClose, on
       title,
       description,
       category: selectedCat,
-      newThumbnailFile, // 추가
-      newContentFile    // 추가
+      newThumbnailFile,
+      newContentFile,
+      projectUrl // 추가
     });
   };
 
@@ -157,6 +164,19 @@ const EditContentModal: React.FC<EditContentModalProps> = ({ isOpen, onClose, on
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
+          </div>
+
+          <div>
+            <label htmlFor="projectUrl_edit_modal" className="block text-sm font-medium text-slate-700 mb-1.5">프로젝트 URL (선택 사항)</label>
+            <input
+              type="url"
+              id="projectUrl_edit_modal"
+              value={projectUrl}
+              onChange={(e) => setProjectUrl(e.target.value)}
+              className={commonInputClass}
+              placeholder="https://example.com/my-project"
+              disabled={isSaving}
+            />
           </div>
 
           {/* 썸네일 이미지 섹션 시작 */}
