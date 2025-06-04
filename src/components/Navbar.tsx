@@ -58,7 +58,7 @@ const Navbar = ({ sections, activeSection, toggleSidebar, isSidebarOpen }: Navba
                 whileTap={{ scale: 0.95 }}
               >
                 <a
-                  href={`#${section.id}`}
+                  href={`/SOOH/#${section.id}`}
                   className="flex items-center space-x-1 px-4 py-2 rounded-full hover:bg-gray-100 transition-colors relative"
                 >
                   <Icon size={20} className="text-gray-600" />
