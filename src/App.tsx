@@ -129,8 +129,7 @@ function App() {
         activeSection={activeSection}
         toggleSidebar={toggleSidebar}
         isSidebarOpen={isSidebarOpen}
-        currentUser={currentUser}
-        isAdmin={isAdmin}
+        // currentUser and isAdmin props removed
       />
 
       <main>
