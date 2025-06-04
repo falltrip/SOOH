@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"; // Added useEffect
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { User as LucideUser, BookOpen, AppWindow, Gamepad2, Film, Menu } from "lucide-react"; // Renamed User to LucideUser to avoid conflict
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
@@ -80,6 +80,30 @@ function App() {
     });
     return () => unsubscribe(); // Cleanup subscription on unmount
   }, []);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const pathParam = params.get('p'); // 예: /app/콘텐츠ID
+    const queryParam = params.get('q'); // 예: 원래 쿼리스트링 값
+
+    // console.log('404 Handler: pathParam=', pathParam, 'queryParam=', queryParam, 'hash=', location.hash);
+
+    if (pathParam) {
+      let targetPath = pathParam;
+      if (queryParam) {
+        targetPath += `?${queryParam.replace(/~and~/g, '&')}`;
+      }
+      // location.hash는 URL에 #이 있으면 #someHash 형태로 반환. 없으면 빈 문자열.
+      // navigate 함수는 경로에 해시가 포함된 문자열을 잘 처리합니다.
+      targetPath += location.hash;
+
+      // console.log('404 Handler: Navigating to', targetPath);
+      navigate(targetPath, { replace: true });
+    }
+  }, [location, navigate]); // location 객체가 바뀔 때마다 실행
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
