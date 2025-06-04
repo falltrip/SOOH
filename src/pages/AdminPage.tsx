@@ -1,5 +1,6 @@
 // src/pages/AdminPage.tsx
 import React, { useState, useMemo, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { LayoutGrid, Book, AppWindow, Gamepad2, Film, PlusCircle, FilePenLine, Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import AddContentModal from '../components/AddContentModal';
 import { db, storage } from '../firebaseClient'; // storage might be used later for file deletion
@@ -324,6 +325,7 @@ const AdminPage: React.FC = () => {
                 <tr>
                   <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">카테고리</th>
                   <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">제목</th>
+                  <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">썸네일</th>
                   <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">수정일</th>
                   <th scope="col" className="px-5 py-3.5 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">작업</th>
                 </tr>
@@ -333,7 +335,22 @@ const AdminPage: React.FC = () => {
                   filteredContents.map((content, index) => (
                     <tr key={content.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'} hover:bg-purple-50/50 transition-colors duration-150 ${isDeleting === content.id ? 'opacity-50' : ''}`}>
                       <td className="px-5 py-4 whitespace-nowrap text-sm text-slate-700">{getCategoryNameById(content.category)}</td>
-                      <td className="px-5 py-4 whitespace-nowrap text-sm text-slate-900 font-semibold">{content.title}</td>
+                      <td className="px-5 py-4 whitespace-nowrap text-sm text-slate-900 font-semibold">
+                            <Link to={`/${content.category}/${content.id}`} className="hover:text-purple-600 hover:underline">
+                              {content.title}
+                            </Link>
+                          </td>
+                      <td className="px-5 py-4 whitespace-nowrap">
+                          {content.thumbnailUrl ? (
+                            <img
+                              src={content.thumbnailUrl}
+                              alt={content.title || '썸네일'}
+                              style={{ width: '120px', height: '80px', objectFit: 'cover', borderRadius: '0.375rem' }}
+                            />
+                          ) : (
+                            <span className="text-xs text-slate-400">No Image</span>
+                          )}
+                        </td>
                       <td className="px-5 py-4 whitespace-nowrap text-sm text-slate-500">{formatDate(content.updatedAt)}</td>
                       <td className="px-5 py-4 whitespace-nowrap text-sm text-center">
                         <button
@@ -357,7 +374,7 @@ const AdminPage: React.FC = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-sm text-slate-500">
+                    <td colSpan={5} className="px-6 py-12 text-center text-sm text-slate-500">
                       {selectedCategory === 'all' && contentsData.length === 0 && !contentsLoading ? '등록된 콘텐츠가 없습니다. "Add Content" 버튼을 눌러 새 콘텐츠를 추가해보세요.' : '이 카테고리에는 아직 콘텐츠가 없습니다.'}
                     </td>
                   </tr>
