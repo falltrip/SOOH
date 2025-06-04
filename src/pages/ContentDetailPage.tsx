@@ -10,6 +10,7 @@ interface ContentData {
   category?: string;
   fileUrl?: string;
   filePath?: string;
+  projectUrl?: string; // <<< 이 줄 추가
   thumbnailUrl?: string;
   createdAt?: Timestamp | Date;
 }
@@ -78,6 +79,19 @@ const ContentDetailPage: React.FC = () => {
 
   // 콘텐츠 렌더링 로직 함수
   const renderContent = () => {
+    // projectUrl이 있으면 최우선으로 iframe 렌더링
+    if (contentData.projectUrl && typeof contentData.projectUrl === 'string' && contentData.projectUrl.trim() !== '') {
+      return (
+        <iframe
+          src={contentData.projectUrl}
+          title={contentData.title || '프로젝트 콘텐츠'}
+          style={{ display: 'block', width: '100%', height: '700px', margin: '20px auto 0', border: '1px solid #ddd', borderRadius: '8px' }}
+          // sandbox="allow-scripts allow-same-origin" // 외부 사이트이므로 sandbox를 더 엄격하게 하거나, 사용자와 협의 필요
+        ></iframe>
+      );
+    }
+
+    // projectUrl이 없으면 기존 fileUrl/filePath 로직 수행
     if (!contentData.filePath || !contentData.fileUrl) {
       return <p style={{ marginTop: '20px', color: '#888' }}>표시할 콘텐츠 파일 정보가 없습니다.</p>;
     }

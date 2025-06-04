@@ -33,6 +33,7 @@ interface Content {
   thumbnailPath?: string; // To store storage path for easier deletion
   fileUrl?: string;
   filePath?: string; // To store storage path for easier deletion
+  projectUrl?: string; // <<< 이 줄 추가
   createdAt: Timestamp | Date;
   updatedAt: Timestamp | Date;
   isPublished?: boolean;
@@ -132,6 +133,7 @@ const AdminPage: React.FC = () => {
     category: string;
     newThumbnailFile: File | null;
     newContentFile: File | null;
+    projectUrl: string; // 추가
   }) => {
     if (!editingContent) {
       alert('수정할 콘텐츠 정보가 없습니다.');
@@ -146,6 +148,7 @@ const AdminPage: React.FC = () => {
       title: formData.title,
       description: formData.description,
       category: formData.category,
+      projectUrl: formData.projectUrl || '', // 빈 문자열 또는 null로 저장
       updatedAt: serverTimestamp(),
     };
 
@@ -241,7 +244,14 @@ const AdminPage: React.FC = () => {
     });
   };
 
-  const handleSaveContent = async (formData: any) => {
+  const handleSaveContent = async (formData: {
+    title: string;
+    description: string;
+    category: string;
+    thumbnailFile: File | null;
+    contentFile: File | null;
+    projectUrl: string; // 추가
+  }) => {
     setIsSavingContent(true);
     let localError = null; // Variable to track error within this function scope
     try {
@@ -270,6 +280,7 @@ const AdminPage: React.FC = () => {
         thumbnailPath,
         fileUrl,
         filePath,
+        projectUrl: formData.projectUrl || '', // 빈 문자열 또는 null로 저장 (선택)
         isPublished: false,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),

@@ -10,15 +10,23 @@ interface Category {
 interface AddContentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (formData: any) => Promise<void>; // Changed to Promise for async handling
+  onSave: (formData: {
+    title: string;
+    description: string;
+    category: string;
+    thumbnailFile: File | null;
+    contentFile: File | null;
+    projectUrl: string; // 추가
+  }) => Promise<void>;
   categories: Category[];
-  isSaving: boolean; // New prop for loading state
+  isSaving: boolean;
 }
 
 const AddContentModal: React.FC<AddContentModalProps> = ({ isOpen, onClose, onSave, categories, isSaving }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedCat, setSelectedCat] = useState<string>('');
+  const [projectUrl, setProjectUrl] = useState('');
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [contentFile, setContentFile] = useState<File | null>(null);
@@ -27,6 +35,7 @@ const AddContentModal: React.FC<AddContentModalProps> = ({ isOpen, onClose, onSa
   const resetForm = useCallback(() => {
     setTitle('');
     setDescription('');
+    setProjectUrl(''); // 추가
     if (categories.length > 0) {
       const firstValidCategory = categories.find(c => c.id !== 'all');
       setSelectedCat(firstValidCategory?.id || categories[0]?.id || '');
@@ -60,7 +69,7 @@ const AddContentModal: React.FC<AddContentModalProps> = ({ isOpen, onClose, onSa
       alert('제목과 카테고리는 필수입니다.');
       return;
     }
-    await onSave({ title, description, category: selectedCat, thumbnailFile, contentFile });
+    await onSave({ title, description, category: selectedCat, thumbnailFile, contentFile, projectUrl });
   };
 
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,6 +127,19 @@ const AddContentModal: React.FC<AddContentModalProps> = ({ isOpen, onClose, onSa
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
+          </div>
+
+          <div>
+            <label htmlFor="projectUrl_modal" className="block text-sm font-medium text-slate-700 mb-1.5">프로젝트 URL (선택 사항)</label>
+            <input
+              type="url"
+              id="projectUrl_modal"
+              value={projectUrl}
+              onChange={(e) => setProjectUrl(e.target.value)}
+              className={commonInputClass}
+              placeholder="https://example.com/my-project"
+              disabled={isSaving}
+            />
           </div>
 
           <div>
