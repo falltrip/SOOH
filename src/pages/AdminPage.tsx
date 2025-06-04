@@ -63,7 +63,7 @@ const AdminPage: React.FC = () => {
           const data = doc_item.data();
           return {
             id: doc_item.id,
-            name: data.name || 'Unnamed Category',
+            name: data.name || doc_item.id,
             slug: data.slug || doc_item.id,
             order: data.order || 0,
             icon: categoryIconMap[doc_item.id.toLowerCase()] || categoryIconMap.default,
@@ -254,7 +254,7 @@ const AdminPage: React.FC = () => {
     <div className="p-4 md:p-6 lg:p-8 bg-slate-50 min-h-screen font-sans">
       <header className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-slate-800">관리자 페이지</h1>
-        <p className="text-slate-600 text-base mt-1">콘텐츠를 효율적으로 관리하고 새로운 내용을 추가하세요.</p>
+        <p className="text-slate-600 text-base p-4 bg-slate-100 rounded-lg shadow-sm mt-2">콘텐츠를 효율적으로 관리하고 새로운 내용을 추가하세요.</p>
       </header>
 
       {categoriesError && (
