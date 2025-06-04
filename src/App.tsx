@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"; // Added useEffect
+import { Routes, Route } from "react-router-dom";
 import { User as LucideUser, BookOpen, AppWindow, Gamepad2, Film, Menu } from "lucide-react"; // Renamed User to LucideUser to avoid conflict
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
@@ -9,6 +10,11 @@ import SignUpModal from "./components/SignUpModal";
 import Hero from "./components/Hero";
 import Section from "./components/Section";
 import Footer from "./components/Footer"; // Import Footer
+import AdminPage from "./pages/AdminPage"; // Import the new AdminPage
+
+const ADMIN_EMAIL = "falltrip97@gmail.com";
+
+// Placeholder AdminPage component has been removed
 
 const sections = [
   {
@@ -57,11 +63,13 @@ function App() {
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loadingAuthState, setLoadingAuthState] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+      setIsAdmin(user?.email === ADMIN_EMAIL);
       setLoadingAuthState(false);
       // console.log("Auth state changed, user:", user);
       // If user is logged in, close modals, otherwise they might stay open if login happens while modal is up.
@@ -113,6 +121,7 @@ function App() {
         toggleSidebar={toggleSidebar}
         openSignInModal={openSignInModal}
         currentUser={currentUser}
+        isAdmin={isAdmin}
       />
 
       <Navbar
@@ -120,21 +129,33 @@ function App() {
         activeSection={activeSection}
         toggleSidebar={toggleSidebar}
         isSidebarOpen={isSidebarOpen}
+        currentUser={currentUser}
+        isAdmin={isAdmin}
       />
 
       <main>
-        <Hero />
-
-        {sections.map((section) => (
-          <Section
-            key={section.id}
-            id={section.id}
-            title={section.title}
-            description={section.description}
-            image={section.image}
-            Icon={section.icon}
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Hero />
+                {sections.map((section) => (
+                  <Section
+                    key={section.id}
+                    id={section.id}
+                    title={section.title}
+                    description={section.description}
+                    image={section.image}
+                    Icon={section.icon}
+                  />
+                ))}
+                <Footer />
+              </>
+            }
           />
-        ))}
+          <Route path="/admin" element={<AdminPage />} />
+        </Routes>
       </main>
 
       <SignInModal
@@ -147,8 +168,7 @@ function App() {
         onClose={closeSignUpModal}
         onSwitchToSignIn={switchToSignIn}
       />
-
-      <Footer /> {/* Add Footer component */}
+      {/* Footer is now part of the / route's element */}
     </div>
   );
 }

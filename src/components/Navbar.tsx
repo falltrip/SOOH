@@ -1,6 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Menu, Bot } from "lucide-react"; // Added Bot import
+import { Menu, Bot, Shield } from "lucide-react"; // Added Bot import
+import { Link } from "react-router-dom"; // Import Link
+
+import { User } from "firebase/auth";
 
 interface NavbarProps {
   sections: Array<{
@@ -11,9 +14,11 @@ interface NavbarProps {
   activeSection: string;
   toggleSidebar: () => void; // Added toggleSidebar
   isSidebarOpen: boolean;    // Added isSidebarOpen
+  currentUser?: User | null;
+  isAdmin?: boolean;
 }
 
-const Navbar = ({ sections, activeSection, toggleSidebar, isSidebarOpen }: NavbarProps) => { // Added props
+const Navbar = ({ sections, activeSection, toggleSidebar, isSidebarOpen, currentUser, isAdmin }: NavbarProps) => { // Added props
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -72,6 +77,21 @@ const Navbar = ({ sections, activeSection, toggleSidebar, isSidebarOpen }: Navba
               </motion.li>
             );
           })}
+          {/* Admin Page Button */}
+          {isAdmin && currentUser && (
+            <motion.li
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link
+                to="/admin"
+                className="flex items-center space-x-1 px-4 py-2 rounded-full bg-purple-600 hover:bg-purple-700 text-white transition-colors relative"
+              >
+                <Shield size={20} className="text-white" />
+                <span className="font-medium">Admin Page</span>
+              </Link>
+            </motion.li>
+          )}
         </ul>
       </div>
     </motion.nav>
