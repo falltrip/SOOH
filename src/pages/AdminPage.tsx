@@ -126,29 +126,96 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  const handleUpdateContent = async (formData: { title: string; description: string; category: string }) => {
+  const handleUpdateContent = async (formData: {
+    title: string;
+    description: string;
+    category: string;
+    newThumbnailFile: File | null;
+    newContentFile: File | null;
+  }) => {
     if (!editingContent) {
       alert('수정할 콘텐츠 정보가 없습니다.');
       return;
     }
-    setIsSavingContent(true); // 로딩 상태 시작 (isSavingContent 재활용)
+    setIsSavingContent(true);
     let localError = null;
 
+    // Firestore에 업데이트할 데이터를 담을 객체
+    // 기본적으로 텍스트 필드와 updatedAt 타임스탬프를 포함
+    const dataToUpdate: any = { // 'any' 대신 더 구체적인 타입을 사용할 수 있으나, 필드가 동적으로 추가되므로 일단 any 사용
+      title: formData.title,
+      description: formData.description,
+      category: formData.category,
+      updatedAt: serverTimestamp(),
+    };
+
     try {
+      // 1. 썸네일 파일 처리
+      if (formData.newThumbnailFile) {
+        // 기존 썸네일이 있으면 삭제
+        if (editingContent.thumbnailPath) {
+          try {
+            const oldThumbRef = ref(storage, editingContent.thumbnailPath);
+            await deleteObject(oldThumbRef);
+            console.log("Old thumbnail deleted from Storage:", editingContent.thumbnailPath);
+          } catch (storageError: any) {
+            if (storageError.code === 'storage/object-not-found') {
+              console.warn("Old thumbnail not found in Storage, maybe already deleted:", editingContent.thumbnailPath);
+            } else {
+              console.error("Error deleting old thumbnail from Storage:", storageError);
+              // 삭제 실패가 전체 업데이트를 막을 필요는 없을 수 있으므로, 에러만 로깅하고 진행
+            }
+          }
+        }
+        // 새 썸네일 업로드
+        const { downloadURL, filePath } = await uploadFile(formData.newThumbnailFile, 'thumbnail');
+        dataToUpdate.thumbnailUrl = downloadURL;
+        dataToUpdate.thumbnailPath = filePath;
+      } else {
+        // 새 썸네일이 없고, 기존 썸네일 정보를 유지해야 하는 경우 (만약 '썸네일 삭제' 기능이 있다면 여기서 null 처리)
+        // 여기서는 사용자가 새 파일을 선택하지 않으면 기존 것을 유지한다고 가정
+        // (단, editingContent에 해당 필드가 없을 수도 있으므로 안전하게 처리)
+        dataToUpdate.thumbnailUrl = editingContent.thumbnailUrl || ''; // 또는 null
+        dataToUpdate.thumbnailPath = editingContent.thumbnailPath || ''; // 또는 null
+      }
+
+      // 2. 콘텐츠 파일 처리
+      if (formData.newContentFile) {
+        // 기존 콘텐츠 파일이 있으면 삭제
+        if (editingContent.filePath) {
+          try {
+            const oldFileRef = ref(storage, editingContent.filePath);
+            await deleteObject(oldFileRef);
+            console.log("Old content file deleted from Storage:", editingContent.filePath);
+          } catch (storageError: any) {
+            if (storageError.code === 'storage/object-not-found') {
+              console.warn("Old content file not found in Storage, maybe already deleted:", editingContent.filePath);
+            } else {
+              console.error("Error deleting old content file from Storage:", storageError);
+            }
+          }
+        }
+        // 새 콘텐츠 파일 업로드
+        const { downloadURL, filePath } = await uploadFile(formData.newContentFile, 'content_file');
+        dataToUpdate.fileUrl = downloadURL;
+        dataToUpdate.filePath = filePath;
+      } else {
+        // 새 콘텐츠 파일이 없고, 기존 정보를 유지하는 경우
+        dataToUpdate.fileUrl = editingContent.fileUrl || ''; // 또는 null
+        dataToUpdate.filePath = editingContent.filePath || ''; // 또는 null
+      }
+
+      // 3. Firestore 문서 업데이트 (이 부분은 다음 단계에서 dataToUpdate 객체를 사용하도록 최종 수정)
       const contentRef = doc(db, 'contents', editingContent.id);
-      await updateDoc(contentRef, {
-        title: formData.title,
-        description: formData.description,
-        category: formData.category,
-        updatedAt: serverTimestamp(),
-      });
+      await updateDoc(contentRef, dataToUpdate); // dataToUpdate 객체로 업데이트
+
       alert('콘텐츠가 성공적으로 수정되었습니다!');
     } catch (error) {
       localError = error;
       console.error("Error updating content: ", error);
       alert(`콘텐츠 수정 중 오류 발생: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
-      setIsSavingContent(false); // 로딩 상태 종료
+      setIsSavingContent(false);
       if (!localError) {
         handleCloseEditModal();
       }
