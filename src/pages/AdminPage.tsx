@@ -3,8 +3,9 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { LayoutGrid, Book, AppWindow, Gamepad2, Film, PlusCircle, FilePenLine, Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import AddContentModal from '../components/AddContentModal';
+import EditContentModal from '../components/EditContentModal'; // 추가
 import { db, storage } from '../firebaseClient'; // storage might be used later for file deletion
-import { collection, addDoc, serverTimestamp, Timestamp, getDocs, onSnapshot, orderBy, query, doc, deleteDoc } from 'firebase/firestore'; // Added doc, deleteDoc
+import { collection, addDoc, serverTimestamp, Timestamp, getDocs, onSnapshot, orderBy, query, doc, deleteDoc, updateDoc } from 'firebase/firestore'; // updateDoc 추가
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage"; // Added deleteObject
 
 interface CategoryDisplay {
@@ -42,6 +43,8 @@ interface Content {
 const AdminPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingContent, setEditingContent] = useState<Content | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null); // Store ID of item being deleted for row-specific loading/disabled state
 
   const [categoriesLoading, setCategoriesLoading] = useState<boolean>(true);
@@ -108,6 +111,47 @@ const AdminPage: React.FC = () => {
   const handleAddModalClose = () => {
     if (!isSavingContent) {
         setIsAddModalOpen(false);
+    }
+  };
+
+  const handleOpenEditModal = (content: Content) => {
+    setEditingContent(content);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    if (!isSavingContent) { // 저장 중일 때는 닫히지 않도록
+      setIsEditModalOpen(false);
+      setEditingContent(null); // 수정 중이던 콘텐츠 정보 초기화
+    }
+  };
+
+  const handleUpdateContent = async (formData: { title: string; description: string; category: string }) => {
+    if (!editingContent) {
+      alert('수정할 콘텐츠 정보가 없습니다.');
+      return;
+    }
+    setIsSavingContent(true); // 로딩 상태 시작 (isSavingContent 재활용)
+    let localError = null;
+
+    try {
+      const contentRef = doc(db, 'contents', editingContent.id);
+      await updateDoc(contentRef, {
+        title: formData.title,
+        description: formData.description,
+        category: formData.category,
+        updatedAt: serverTimestamp(),
+      });
+      alert('콘텐츠가 성공적으로 수정되었습니다!');
+    } catch (error) {
+      localError = error;
+      console.error("Error updating content: ", error);
+      alert(`콘텐츠 수정 중 오류 발생: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      setIsSavingContent(false); // 로딩 상태 종료
+      if (!localError) {
+        handleCloseEditModal();
+      }
     }
   };
 
@@ -345,7 +389,7 @@ const AdminPage: React.FC = () => {
                             <img
                               src={content.thumbnailUrl}
                               alt={content.title || '썸네일'}
-                              style={{ width: '120px', height: '80px', objectFit: 'cover', borderRadius: '0.375rem' }}
+                              style={{ width: '240px', height: '160px', objectFit: 'cover', borderRadius: '0.375rem' }}
                             />
                           ) : (
                             <span className="text-xs text-slate-400">No Image</span>
@@ -357,7 +401,7 @@ const AdminPage: React.FC = () => {
                           className="p-1.5 text-blue-600 hover:text-blue-500 hover:bg-blue-100 rounded-full transition-colors duration-150 mr-2 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Modify"
                           disabled={!!isDeleting || isSavingContent} // Simplified disable logic
-                          onClick={() => alert('수정 기능은 곧 구현될 예정입니다!')}
+                          onClick={() => handleOpenEditModal(content)}
                         >
                           <FilePenLine size={18} />
                         </button>
@@ -391,6 +435,14 @@ const AdminPage: React.FC = () => {
         onSave={handleSaveContent}
         categories={modalCategories}
         isSaving={isSavingContent}
+      />
+      <EditContentModal // 추가된 부분
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        onSave={handleUpdateContent}
+        contentToEdit={editingContent}
+        categories={modalCategories} // 카테고리 목록은 동일하게 사용
+        isSaving={isSavingContent}  // 저장 로딩 상태 공유
       />
     </div>
   );
